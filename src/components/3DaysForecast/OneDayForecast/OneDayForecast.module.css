@@ -1,0 +1,16 @@
+.right_badge{
+    background: #53adb5;
+    height: inherit;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+}
+Card{
+    border: 0 none;
+}
+
+.card_body{
+    margin: 10px;
+    border-radius: 25px;
+    box-shadow: #9fb2b5 10px 10px 40px;
+}
