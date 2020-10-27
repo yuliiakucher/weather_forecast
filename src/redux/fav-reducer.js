@@ -1,9 +1,11 @@
 import {CurrentWeather} from "../api/api";
 
 const GET_FAV_PLACE_INFO = 'GET_FAV_PLACE_INFO'
+const GET_FAV_STORAGE = 'GET_FAV_STORAGE'
 
 const initialState = {
-    favs: []
+    favs: [],
+    favsStorage: ''
 }
 
 const FavReducer = (state = initialState, action) => {
@@ -20,6 +22,12 @@ const FavReducer = (state = initialState, action) => {
                     wind_dir: action.wind_dir,
                     wind_speed: action.wind_speed
                 }]
+            }
+        }
+        case GET_FAV_STORAGE: {
+            return {
+                ...state,
+                favsStorage: action.name_local
             }
         }
         default:
@@ -52,6 +60,8 @@ const setFavPlace = (name, country, temp, icon, humidity, wind_dir, wind_speed) 
     wind_dir,
     wind_speed
 })
+
+export const changeStorage = (name_local) => ({type: GET_FAV_STORAGE, name_local})
 
 export const getFavPlace = (city) => {
     return dispatch => {
