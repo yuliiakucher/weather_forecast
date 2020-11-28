@@ -1,9 +1,11 @@
-.right_badge{
+.right_badge {
     background: #53adb5;
     height: inherit;
     border-radius: 1rem;
     display: flex;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
 }
 Card{
     border: 0 none;

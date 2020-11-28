@@ -20,11 +20,10 @@ const MapReducer = (state = initialState, action) => {
 
 const getCurrentWeather = (icon, temp, latlng) => ({type: GET_CURRENT_WEATHER, icon, temp, latlng})
 
-export const setMarker = (lat, lon) => {
+export const setMarker = (lat, lon, units) => {
     return dispatch => {
-        CurrentWeather.getCurrentWeather(lat, lon)
+        CurrentWeather.getCurrentWeather(lat, lon, units)
             .then(response => {
-                console.log(response)
                 dispatch(getCurrentWeather(
                     response.data.weather[0].icon,
                     Math.ceil(response.data.main.temp),

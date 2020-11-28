@@ -1,21 +1,25 @@
-import React, {useEffect} from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Image from "react-bootstrap/Image";
 import style from './FavCity.module.css'
 import Button from "react-bootstrap/Button";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faWind, faTint} from '@fortawesome/free-solid-svg-icons'
 
-const FavCity = ({name, country, temp, icon, humidity, wind_dir, wind_speed, favsStorage, changeStorage}) => {
-
-    useEffect(()=> {
-        console.log(favsStorage)
-    }, [favsStorage])
+const FavCity = ({
+                     name, country, temp, icon,
+                     humidity, wind_dir, wind_speed,
+                     getFavPlace, units, clearFavs
+                 }) => {
 
     const deleteFromFavs = (name) => {
         const fav_locations = localStorage.getItem('fav_location')
         localStorage.setItem('fav_location', fav_locations.split(' ').filter(word => word !== name).join(' '))
-        changeStorage(localStorage.getItem('fav_location'))
+        const locations = localStorage.getItem('fav_location').split(' ')
+        clearFavs()
+        locations[0] && locations.map(location => getFavPlace(location, units))
     }
 
     return (
@@ -30,27 +34,26 @@ const FavCity = ({name, country, temp, icon, humidity, wind_dir, wind_speed, fav
 
             <Card.Body>
                 <Row>
-                    <Col className={style.icon}>
+                    <Col className={style.icon} lg={3}>
                         <Image
+                            style={{maxWidth: '70px'}}
                             src={`http://openweathermap.org/img/wn/${icon}@2x.png`}/>
                     </Col>
                     <Col>
                         <h4>{temp}°C</h4>
                     </Col>
                     <Col className={style.name}>
-
-                        <p>{name}</p>
-                        <p>{country}</p>
+                        <div>{name}</div>
+                        <div>{country}</div>
                     </Col>
                 </Row>
             </Card.Body>
             <Card.Footer>
                 <Row>
-                    <Col>
-                        <p> Humidity: {humidity}%</p>
-                    </Col>
-                    <Col>Wind direction: {wind_dir}</Col>
-                    <Col>{wind_speed} meter/sec</Col>
+                    <div><FontAwesomeIcon icon={faTint}/> Humidity: {humidity}%</div>
+                </Row>
+                <Row>
+                    <div><FontAwesomeIcon icon={faWind}/> {wind_speed}m/s {wind_dir}</div>
                 </Row>
             </Card.Footer>
         </Card>

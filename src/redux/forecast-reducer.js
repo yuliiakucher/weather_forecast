@@ -1,12 +1,15 @@
 import {CurrentWeather} from "../api/api";
 
 const GET_FORECAST_INFO = 'GET_FORECAST_INFO'
+const GET_7DAYS_FORECAST = 'GET_7DAYS_FORECAST'
 const SET_PRELOADER = 'SET_PRELOADER'
+const SET_PRELOADER_7DAYS = 'SET_PRELOADER_7DAYS'
 
 const initialState = {
-    three_days_forecast: [
-    ],
-    isLoading: true
+    three_days_forecast: [],
+    seven_days_forecast: [],
+    isLoading: true,
+    isLoading7Days: true
 
 }
 
@@ -15,14 +18,7 @@ const ForecastReducer = (state = initialState, action) => {
         case GET_FORECAST_INFO: {
             return {
                 ...state,
-                three_days_forecast: [...state.three_days_forecast, {
-                    date: action.date,
-                    temp_min: Math.ceil(action.temp_min),
-                    temp_max: Math.ceil(action.temp_max),
-                    icon: action.icon,
-                    details: action.details
-                }],
-
+                three_days_forecast: action.payload
             }
         }
         case SET_PRELOADER: {
@@ -31,73 +27,49 @@ const ForecastReducer = (state = initialState, action) => {
                 isLoading: action.value
             }
         }
+        case SET_PRELOADER_7DAYS: {
+            return {
+                ...state,
+                isLoading7Days: action.value
+            }
+        }
+        case GET_7DAYS_FORECAST: {
+            return {
+                ...state,
+                seven_days_forecast: action.payload
+            }
+        }
         default:
             return state
     }
 }
 
-const setForecastInfo = (date, temp_min, temp_max, icon, details) => ({
-    type: GET_FORECAST_INFO,
-    date,
-    temp_min,
-    temp_max,
-    icon,
-    details
-})
+const setForecastInfo = (payload) => ({type: GET_FORECAST_INFO, payload})
+
+const set7DaysForecast = (payload) => ({type: GET_7DAYS_FORECAST, payload})
 
 export let setPreloader = (value) => ({type: SET_PRELOADER, value})
+export let setPreloader7Days = (value) => ({type: SET_PRELOADER_7DAYS, value})
 
-export const getForecastInfo = (lat, lon) => {
+export const getForecastInfo = (lat, lon, units) => {
     return (dispatch) => {
-        CurrentWeather.getThreeDaysForecast(lat, lon)
+        CurrentWeather.get7DaysForecast(lat, lon, units)
             .then(response => {
-                const nowData = new Date()
-
-                const day1 = response.data.list.filter(item => {
-                    const d = new Date(item.dt_txt)
-                    return (
-                        d.getDate() === nowData.getDate() + 1
-                    )
-                })
-                day1.sort((a, b) => a.main.temp - b.main.temp)
-                dispatch(setForecastInfo(day1[0].dt_txt,
-                    day1[0].main.temp,
-                    day1[7].main.temp,
-                    day1[0].weather[0].icon,
-                    day1[0].weather[0].main,
-                ))
-
-                const day2 = response.data.list.filter(item => {
-                    const d = new Date(item.dt_txt)
-                    return (
-                        d.getDate() === nowData.getDate() + 2
-                    )
-                })
-                day2.sort((a, b) => a.main.temp - b.main.temp)
-                dispatch(setForecastInfo(day2[0].dt_txt,
-                    day2[0].main.temp,
-                    day2[7].main.temp,
-                    day2[0].weather[0].icon,
-                    day2[0].weather[0].main,
-                ))
-
-                const day3 = response.data.list.filter(item => {
-                    const d = new Date(item.dt_txt)
-                    return (
-                        d.getDate() === nowData.getDate() + 3
-                    )
-                })
-                day3.sort((a, b) => a.main.temp - b.main.temp)
-                dispatch(setForecastInfo(day3[0].dt_txt,
-                    day3[0].main.temp,
-                    day3[7].main.temp,
-                    day3[0].weather[0].icon,
-                    day3[0].weather[0].main,
-                ))
+                dispatch(setForecastInfo(response.data.daily.slice(1,4)))
                 dispatch(setPreloader(false))
-
             })
 
+    }
+}
+
+export const get7DaysForecast = (lat, lon, units) => {
+    return dispatch => {
+        dispatch(setPreloader7Days(true))
+        CurrentWeather.get7DaysForecast(lat, lon, units)
+            .then(response => {
+                dispatch(set7DaysForecast(response.data))
+                dispatch(setPreloader7Days(false))
+            })
     }
 }
 

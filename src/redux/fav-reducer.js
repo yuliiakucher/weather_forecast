@@ -1,7 +1,8 @@
 import {CurrentWeather} from "../api/api";
+import {windRose} from "../utilits/utilits";
 
 const GET_FAV_PLACE_INFO = 'GET_FAV_PLACE_INFO'
-const GET_FAV_STORAGE = 'GET_FAV_STORAGE'
+const CLEAR_FAVS = 'CLEAR_FAVS'
 
 const initialState = {
     favs: [],
@@ -24,10 +25,10 @@ const FavReducer = (state = initialState, action) => {
                 }]
             }
         }
-        case GET_FAV_STORAGE: {
+        case CLEAR_FAVS: {
             return {
                 ...state,
-                favsStorage: action.name_local
+                favs: []
             }
         }
         default:
@@ -36,19 +37,6 @@ const FavReducer = (state = initialState, action) => {
     }
 }
 
-const windRose = (degr) => {
-    switch (true) {
-        case  (degr > 22.5 && degr < 67.5): return 'NE'
-        case  (degr > 67.5 && degr<112.5): return 'E'
-        case  (degr > 112.5 && degr<157.5): return 'SE'
-        case  (degr > 157.5  && degr< 202.5) : return 'S'
-        case  (degr > 202.5  && degr< 247.5) : return 'SW'
-        case ( degr > 247.5  && degr< 292.5 ): return 'W'
-        case  (degr > 292.5  && degr< 337.5 ): return 'NW'
-        default: return 'N'
-    }
-
-}
 
 const setFavPlace = (name, country, temp, icon, humidity, wind_dir, wind_speed) => ({
     type: GET_FAV_PLACE_INFO,
@@ -61,13 +49,12 @@ const setFavPlace = (name, country, temp, icon, humidity, wind_dir, wind_speed) 
     wind_speed
 })
 
-export const changeStorage = (name_local) => ({type: GET_FAV_STORAGE, name_local})
+const setClearFavs = () => ({type: CLEAR_FAVS})
 
-export const getFavPlace = (city) => {
+export const getFavPlace = (city, units) => {
     return dispatch => {
-        CurrentWeather.getFavCity(city)
+        CurrentWeather.getFavCity(city, units)
             .then(response => {
-                console.log(response.data)
                 dispatch(setFavPlace(
                     response.data.name,
                     response.data.sys.country,
@@ -78,6 +65,12 @@ export const getFavPlace = (city) => {
                     response.data.wind.speed,
                 ))
             })
+    }
+}
+
+export const clearFavs = () => {
+    return dispatch => {
+        dispatch(setClearFavs())
     }
 }
 

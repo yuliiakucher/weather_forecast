@@ -1,27 +1,45 @@
 import React, {useEffect} from 'react';
 import './App.css';
 import HomePage from "./components/HomePage/HomePage";
-import {Route} from "react-router-dom";
-import WeatherDetails from "./components/WeatherDetails/WeatherDetails";
+import {Redirect, Route} from "react-router-dom";
 import Header from "./components/Header/Header";
 import {connect} from "react-redux";
 import {getInfoFromCoordinates} from "./redux/current-reducer";
 import {getForecastInfo} from "./redux/forecast-reducer";
+import WeatherDetailsContainer from "./components/WeatherDetails/WeatherDetailsContainer";
 
 const App = (props) => {
-    useEffect(() => {
+
+    const getCurrentLocation = () => {
         navigator.geolocation.getCurrentPosition(position => {
-            console.log(position.coords.latitude, position.coords.longitude)
-            props.getForecastInfo(position.coords.latitude, position.coords.longitude)
-        });
-    })
+            localStorage.setItem('lat', position.coords.latitude)
+            localStorage.setItem('lon', position.coords.longitude)
+        }, () => {
+            localStorage.setItem('lat', 51.5074)
+            localStorage.setItem('lon', 0.1278)
+        })
+    }
+
+
+    useEffect(() => {
+        getCurrentLocation()
+        props.getForecastInfo(localStorage.getItem('lat'), localStorage.getItem('lon'), props.units)
+    }, [props.units])
+
     return (
         <>
             <Header/>
-            <Route exact path='/' render={() => <HomePage/>}/>
-            <Route path='/details' render={() => <WeatherDetails/>}/>
+            <Redirect from="/" to="/weather_forecast"/>
+            <Route exact path='/weather_forecast' render={() => <HomePage/>}/>
+            <Route path='/details' render={() => <WeatherDetailsContainer/>}/>
         </>
     );
 }
 
-export default connect(null, {getInfoFromCoordinates, getForecastInfo})(App);
+let mapStateToProps = (state) => {
+    return{
+        units: state.CurrentReducer.units
+    }
+}
+
+export default connect(mapStateToProps, {getInfoFromCoordinates, getForecastInfo})(App);

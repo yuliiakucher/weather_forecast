@@ -7,19 +7,19 @@ const instance = axios.create({
 })
 
 export const CurrentWeather = {
-    getCurrentWeather(lat, lon) {
-        return(
-            instance.get(`weather?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`)
+    getCurrentWeather(lat, lon, units = 'metric') {
+        return (
+            instance.get(`weather?lat=${lat}&lon=${lon}&appid=${api_key}&units=${units}`)
         )
     },
-    getThreeDaysForecast(lat, lon) {
-        return(
-            instance.get(`forecast?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`)
+    getFavCity(city, units = 'metric') {
+        return (
+            instance.get(`weather?q=${city}&appid=${api_key}&units=${units}`)
         )
     },
-    getFavCity(city) {
-        return(
-            instance.get(`weather?q=${city}&appid=${api_key}&units=metric`)
+    get7DaysForecast(lat, lon, units = 'metric') {
+        return (
+            instance.get(`onecall?lat=${lat}&lon=${lon}&exclude=current,minutely,hourly,alerts&appid=${api_key}&units=${units}`)
         )
-    },
+    }
 }

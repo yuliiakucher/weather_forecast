@@ -3,9 +3,6 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ThreeDaysForecast from "../3DaysForecast/3DaysForecast";
-import {connect} from "react-redux";
-import {getInfoFromCoordinates} from "../../redux/current-reducer";
-import {getForecastInfo} from "../../redux/forecast-reducer";
 import WeatherMap from "../WeatherMap/WeatherMap";
 import FavCitiesClass from "../FavCities/FavCitiesClass";
 
@@ -21,7 +18,7 @@ const HomePage = () => {
                 <Col>
                     <WeatherMap/>
                 </Col>
-                <Col>
+                <Col lg={3}>
                     <FavCitiesClass/>
                 </Col>
             </Row>
@@ -29,14 +26,4 @@ const HomePage = () => {
     )
 }
 
-let mapStateToProps = (state) => {
-    return {
-        city: state.CurrentReducer.city,
-        temp: state.CurrentReducer.temp,
-        icon: state.CurrentReducer.icon,
-        main: state.CurrentReducer.main,
-
-    }
-}
-
-export default connect(mapStateToProps, {getInfoFromCoordinates, getForecastInfo})(HomePage)
+export default HomePage

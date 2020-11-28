@@ -2,3 +2,23 @@
     width: 400px;
     height: 400px;
 }
+
+.img {
+    width: 40px;
+}
+
+.marker{
+    width: 70px;
+    height: content-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 100%;
+}
+
+.temp{
+    font-size: 10px;
+    color: white;
+}
